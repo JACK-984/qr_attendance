@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:context=".CreateCourse">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Create Course"
+        android:textSize="24sp"
+        android:layout_margin="16dp"/>
+
+    <EditText
+        android:id="@+id/courseName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Course Name"
+        android:padding="12dp"
+        android:layout_margin="16dp"/>
+
+    <EditText
+        android:id="@+id/courseCode"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Course Code"
+        android:inputType="textCapCharacters"
+        android:padding="12dp"
+        android:layout_margin="16dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Schedule"
+        android:textSize="20sp"
+        android:layout_margin="16dp"/>
+
+    <EditText
+        android:id="@+id/start_time"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Start Time (e.g., 09:00 AM)"
+        android:inputType="time"
+        android:padding="12dp"
+        android:layout_margin="16dp"/>
+
+    <EditText
+        android:id="@+id/end_time"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="End Time (e.g., 10:30 AM)"
+        android:inputType="time"
+        android:padding="12dp"
+        android:layout_margin="16dp"/>
+
+    <CheckBox
+        android:id="@+id/checkBox_monday"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Monday"
+        android:layout_margin="16dp"/>
+
+    <CheckBox
+        android:id="@+id/checkBox_tuesday"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Tuesday"
+        android:layout_margin="16dp"/>
+
+    <CheckBox
+        android:id="@+id/checkBox_wednesday"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Wednesday"
+        android:layout_margin="16dp"/>
+
+    <CheckBox
+        android:id="@+id/checkBox_thursday"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Thursday"
+        android:layout_margin="16dp"/>
+
+    <CheckBox
+        android:id="@+id/checkBox_friday"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Friday"
+        android:layout_margin="16dp"/>
+    <CheckBox
+        android:id="@+id/checkBox_saturday"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Saturday"
+        android:layout_margin="16dp"/>
+    <Button
+        android:id="@+id/button_create_course"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Create Course"
+        android:layout_gravity="center"
+        android:layout_marginTop="32dp"/>
+    </LinearLayout>
+</ScrollView>
