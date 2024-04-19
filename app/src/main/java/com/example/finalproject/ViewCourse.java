@@ -33,21 +33,22 @@ public class ViewCourse extends AppCompatActivity implements CourseAdapter.OnCou
         // Initialize Firestore
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         courses = new ArrayList<>();
+
         // Reference to the "courses" collection in Firestore
         db.collection("courses")
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        courses = new ArrayList<>();
+                        courses.clear(); // Clear the list before adding new data
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             // Get the course name from each document
                             String courseName = document.getString("name");
+                            courseID = document.getId(); // Get the course ID
                             courses.add(courseName);
-                            courseID = document.getId();
                         }
                         // Initialize RecyclerView and set the adapter with the list of courses
                         courseList = findViewById(R.id.courseList);
-                        adapter = new CourseAdapter(courses,this);
+                        adapter = new CourseAdapter(courses, this); // Pass courses list without courseID
                         courseList.setLayoutManager(new LinearLayoutManager(this));
                         courseList.setAdapter(adapter);
                     } else {
@@ -55,19 +56,16 @@ public class ViewCourse extends AppCompatActivity implements CourseAdapter.OnCou
                         Toast.makeText(ViewCourse.this, "Failed to load courses", Toast.LENGTH_SHORT).show();
                     }
                 });
-        courseList = findViewById(R.id.courseList);
-        adapter = new CourseAdapter(courses,this);
-        courseList.setLayoutManager(new LinearLayoutManager(this));
-        courseList.setAdapter(adapter);
     }
 
     // Override the onCourseClick method of the listener interface
     @Override
-    public void onCourseClick(String courseName) {
+    public void onCourseClick(String courseName, String courseID) {
         // Start a new activity to display the list of students for the clicked course
         Intent intent = new Intent(this, EnrollStudent.class);
         intent.putExtra("courseName", courseName); // Pass the clicked course name to the new activity
-        intent.putExtra("courseID",courseID);
+        intent.putExtra("courseID", courseID);
         startActivity(intent);
     }
 }
+

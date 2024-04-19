@@ -46,6 +46,9 @@ public class EnrollStudent extends AppCompatActivity {
         // Get the course ID passed from the previous activity
         String courseName = getIntent().getStringExtra("courseName");
         courseID = getIntent().getStringExtra("courseID");
+        Toast.makeText(this,"courseID: "+ courseID,Toast.LENGTH_SHORT).show();
+        Toast.makeText(this,"courseName: "+ courseName,Toast.LENGTH_SHORT).show();
+
         // Reference to the specific course document in Firestore
         DocumentReference courseRef = db.collection("courses").document(courseID);
 

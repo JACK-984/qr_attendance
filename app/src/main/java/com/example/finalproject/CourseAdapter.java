@@ -4,17 +4,21 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.List;
 
 public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseViewHolder> {
     private List<String> courses;
     private OnCourseClickListener onCourseClickListener; // Click listener interface
-
-    public CourseAdapter(List<String> courses, OnCourseClickListener onCourseClickListener) {
+    String courseID;
+    public CourseAdapter(List<String> courses,OnCourseClickListener onCourseClickListener) {
         this.courses = courses;
         this.onCourseClickListener = onCourseClickListener;
     }
@@ -38,7 +42,7 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseView
     }
 
     public interface OnCourseClickListener {
-        void onCourseClick(String courseName); // Method to handle course click events
+        void onCourseClick(String courseName,String courseID); // Method to handle course click events
     }
 
     public class CourseViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -52,9 +56,33 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseView
 
         @Override
         public void onClick(View v) {
-            // Call the onCourseClick method of the listener interface when the item is clicked
-            onCourseClickListener.onCourseClick(courses.get(getAdapterPosition()));
+            // Get the course name
+            String courseName = courses.get(getAdapterPosition());
+
+            // Reference to the "courses" collection in Firestore
+            FirebaseFirestore.getInstance().collection("courses")
+                    .whereEqualTo("name", courseName)
+                    .get()
+                    .addOnSuccessListener(queryDocumentSnapshots -> {
+                        if (!queryDocumentSnapshots.isEmpty()) {
+                            // Get the document snapshot of the first result (assuming course names are unique)
+                            QueryDocumentSnapshot documentSnapshot = (QueryDocumentSnapshot) queryDocumentSnapshots.getDocuments().get(0);
+                            // Get the document ID (courseID) of the course
+                            String courseID = documentSnapshot.getId();
+                            // Call the onCourseClick method of the listener interface with the courseName and courseID
+                            onCourseClickListener.onCourseClick(courseName, courseID);
+                        } else {
+                            // Handle case where no course with the given name is found
+                            Toast.makeText(itemView.getContext(), "Course not found", Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .addOnFailureListener(e -> {
+                        // Handle failure
+                        Toast.makeText(itemView.getContext(), "Failed to retrieve course ID", Toast.LENGTH_SHORT).show();
+                    });
         }
+
+
 
         public void bind(String courseName) {
             textViewCourseName.setText(courseName);
