@@ -2,6 +2,8 @@ package com.example.finalproject;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.widget.Toast;
@@ -18,39 +20,23 @@ public class StudentActivity extends AppCompatActivity {
     FirebaseUser currentUser;
     String userID;
     FirebaseFirestore db;
+    RecyclerView ui_list;
+    studentUIAdapter adapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_student);
+
+        ui_list = findViewById(R.id.student_ui_list);
+        String[] items = {"Scan QR CODE","View course","Sign out"};
+        ui_list.setLayoutManager(new LinearLayoutManager(this));
+        adapter = new studentUIAdapter(this,items);
+        ui_list.setAdapter(adapter);
+
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
         userID = mAuth.getUid();
         db = FirebaseFirestore.getInstance();
-        Toast.makeText(getApplicationContext(),userID,Toast.LENGTH_SHORT).show();
 
-        // match userID from students collections to userID from FireAuth
-        // shows userRole
-//        db.collection("students")
-//                .whereEqualTo("userID", userID)
-//                .get()
-//                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-//                    @Override
-//                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-//                        if (!queryDocumentSnapshots.isEmpty()) {
-//                            String role = queryDocumentSnapshots.getDocuments().get(0).getString("role");
-//                            // Now you have the role, you can display it using Toast
-//                            Toast.makeText(getApplicationContext(), "Your role is: " + role, Toast.LENGTH_SHORT).show();
-//                        } else {
-//                            Toast.makeText(getApplicationContext(), "No role found for this user", Toast.LENGTH_SHORT).show();
-//                        }
-//                    }
-//                })
-//                .addOnFailureListener(new OnFailureListener() {
-//                    @Override
-//                    public void onFailure(@NonNull Exception e) {
-//                        // Handle failures
-//                        Toast.makeText(getApplicationContext(), "Failed to retrieve role: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-//                    }
-//                });
     }
 }
