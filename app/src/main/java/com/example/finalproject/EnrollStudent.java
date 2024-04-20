@@ -161,27 +161,46 @@ public class EnrollStudent extends AppCompatActivity {
             }
         }
 
-        // Method to enroll the student in the course
         private void enrollStudent(String studentName) {
             // Reference to the specific course document in Firestore using the courseID
             DocumentReference courseRef = FirebaseFirestore.getInstance().collection("courses").document(courseID);
 
-            // Create a Map to represent the data to be stored in Firestore
-            Map<String, Object> enrolledStudentData = new HashMap<>();
-            enrolledStudentData.put("enrolled", true); // Use a placeholder value
+            // Query Firestore to get the user document based on the student name
+            FirebaseFirestore.getInstance().collection("users")
+                    .whereEqualTo("name", studentName)
+                    .get()
+                    .addOnSuccessListener(querySnapshot -> {
+                        // Assuming there is only one document matching the student name
+                        for (QueryDocumentSnapshot userDoc : querySnapshot) {
+                            // Get the userID field from the user document
+                            String userID = userDoc.getString("userID");
 
-            // Add the student to the enrolledStudents subcollection of the course document
-            courseRef.collection("enrolledStudents").document(studentName)
-                    .set(enrolledStudentData) // Set the Map as the data
-                    .addOnSuccessListener(aVoid -> {
-                        // Update UI or show success message
-                        Toast.makeText(EnrollStudent.this, studentName + " enrolled successfully", Toast.LENGTH_SHORT).show();
+                            // Create a Map to represent the data to be stored in Firestore
+                            Map<String, Object> enrolledStudentData = new HashMap<>();
+                            enrolledStudentData.put("enrolled", true);
+                            enrolledStudentData.put("userID", userID);
+
+                            // Add the student to the enrolledStudents subcollection of the course document
+                            courseRef.collection("enrolledStudents").document(studentName)
+                                    .set(enrolledStudentData) // Set the Map as the data
+                                    .addOnSuccessListener(aVoid -> {
+                                        // Update UI or show success message
+                                        Toast.makeText(EnrollStudent.this, studentName + " enrolled successfully", Toast.LENGTH_SHORT).show();
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        // Handle failure and show error message
+                                        Toast.makeText(EnrollStudent.this, "Failed to enroll " + studentName, Toast.LENGTH_SHORT).show();
+                                    });
+                        }
                     })
                     .addOnFailureListener(e -> {
-                        // Handle failure and show error message
-                        Toast.makeText(EnrollStudent.this, "Failed to enroll " + studentName, Toast.LENGTH_SHORT).show();
+                        // Handle failure to retrieve userID and show error message
+                        Toast.makeText(EnrollStudent.this, "Failed to retrieve userID for " + studentName, Toast.LENGTH_SHORT).show();
                     });
         }
+
+
+
 
         // Method to unenroll the student from the course
         private void unenrollStudent(String studentName) {

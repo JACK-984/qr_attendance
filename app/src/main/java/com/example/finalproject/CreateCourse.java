@@ -27,7 +27,7 @@ import com.google.firebase.storage.StorageReference;
 
 public class CreateCourse extends AppCompatActivity {
     private EditText editTextCourseName, editTextCourseCode, editTextStartTime, editTextEndTime;
-    private CheckBox checkBoxMonday, checkBoxTuesday, checkBoxWednesday, checkBoxThursday, checkBoxFriday, checkBoxSaturday;
+    private CheckBox checkBoxMonday, checkBoxTuesday, checkBoxWednesday, checkBoxThursday, checkBoxFriday, checkBoxSaturday,checkBoxSunday;
     private Button buttonCreateCourse;
     private FirebaseFirestore db;
     private FirebaseStorage storage;
@@ -52,6 +52,7 @@ public class CreateCourse extends AppCompatActivity {
         checkBoxThursday = findViewById(R.id.checkBox_thursday);
         checkBoxFriday = findViewById(R.id.checkBox_friday);
         checkBoxSaturday = findViewById(R.id.checkBox_saturday);
+        checkBoxSunday = findViewById(R.id.checkBox_sunday);
         buttonCreateCourse = findViewById(R.id.button_create_course);
 
         // Set click listener for the create course button
@@ -70,7 +71,8 @@ public class CreateCourse extends AppCompatActivity {
                 checkBoxWednesday.isChecked(),
                 checkBoxThursday.isChecked(),
                 checkBoxFriday.isChecked(),
-                checkBoxSaturday.isChecked()
+                checkBoxSaturday.isChecked(),
+                checkBoxSunday.isChecked(),
         };
         // Create a List<Boolean> from the boolean array
         List<Boolean> daysOfWeekList = new ArrayList<>();
