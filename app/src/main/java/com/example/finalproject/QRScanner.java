@@ -19,15 +19,19 @@ import com.journeyapps.barcodescanner.BarcodeCallback;
 import com.journeyapps.barcodescanner.BarcodeResult;
 import com.journeyapps.barcodescanner.CompoundBarcodeView;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-
+// TODO: Add student history collection to the firebase collection to USERS that are role "student"
 public class QRScanner extends AppCompatActivity {
     private CompoundBarcodeView barcodeView;
     private static final int CAMERA_PERMISSION_REQUEST_CODE = 100;
     // Flag to track whether the scanning process is ongoing
     private boolean scanningInProgress = false;
+    // List to track scanned courses for each day of the week
+    private List<String>[] scannedCourses;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,6 +40,11 @@ public class QRScanner extends AppCompatActivity {
         // Initialize the barcode scanner view
         barcodeView = findViewById(R.id.barcode_scanner);
 
+        // Initialize the list to track scanned courses for each day of the week
+        scannedCourses = new List[7];
+        for (int i = 0; i < 7; i++) {
+            scannedCourses[i] = new ArrayList<>();
+        }
         // Check if the camera permission is granted
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -89,6 +98,18 @@ public class QRScanner extends AppCompatActivity {
                 // Get the current date and time
                 Calendar currentTime = Calendar.getInstance();
 
+                // Get the current day of the week (Sunday = 1, Monday = 2, ..., Saturday = 7)
+                int currentDayOfWeek = currentTime.get(Calendar.DAY_OF_WEEK);
+
+                // Check if the course has already been scanned for the current day
+                if (scannedCourses[currentDayOfWeek - 1].contains(courseId)) {
+                    // Course has already been scanned for the current day
+                    Toast.makeText(QRScanner.this, "Course has already been scanned for today", Toast.LENGTH_SHORT).show();
+                    // Invoke the callback function to handle further actions
+                    callback.run();
+                    return;
+                }
+
                 // Query Firestore to retrieve the course details
                 FirebaseFirestore.getInstance().collection("courses")
                         .document(courseId)
@@ -98,24 +119,31 @@ public class QRScanner extends AppCompatActivity {
                                 // Retrieve course information
                                 String startTime = documentSnapshot.getString("startTime");
                                 String endTime = documentSnapshot.getString("endTime");
-//                                Toast.makeText(QRScanner.this, startTime + endTime, Toast.LENGTH_SHORT).show();
-                                // Parse start and end times
-                                Calendar sessionStartDateTime = Calendar.getInstance();
-                                Calendar sessionEndDateTime = Calendar.getInstance();
-                                sessionStartDateTime.set(Calendar.HOUR_OF_DAY, getHourOfDay(startTime));
-                                sessionStartDateTime.set(Calendar.MINUTE, getMinuteOfHour(startTime));
-                                sessionEndDateTime.set(Calendar.HOUR_OF_DAY, getHourOfDay(endTime));
-                                sessionEndDateTime.set(Calendar.MINUTE, getMinuteOfHour(endTime));
+                                // Get the list of active days for the course from Firestore
+                                List<Boolean> activeDays = (List<Boolean>) documentSnapshot.get("daysOfWeek");
+                                // Check if the current day is one of the active days for the course
+                                if (activeDays != null && currentDayOfWeek <= activeDays.size() && activeDays.get(currentDayOfWeek - 1)) {
+                                    // Parse start and end times
+                                    Calendar sessionStartDateTime = Calendar.getInstance();
+                                    Calendar sessionEndDateTime = Calendar.getInstance();
+                                    sessionStartDateTime.set(Calendar.HOUR_OF_DAY, getHourOfDay(startTime));
+                                    sessionStartDateTime.set(Calendar.MINUTE, getMinuteOfHour(startTime));
+                                    sessionEndDateTime.set(Calendar.HOUR_OF_DAY, getHourOfDay(endTime));
+                                    sessionEndDateTime.set(Calendar.MINUTE, getMinuteOfHour(endTime));
 
-                                // Compare current time with session start and end time
-                                if (currentTime.after(sessionStartDateTime) && currentTime.before(sessionEndDateTime)) {
-                                    // If the current time falls within the session start and end time, mark attendance
-                                    markAttendance(courseId, currentTime.getTime(), sessionStartDateTime, sessionEndDateTime);
+                                    // Compare current time with session start and end time
+                                    if (currentTime.after(sessionStartDateTime) && currentTime.before(sessionEndDateTime)) {
+                                        // If the current time falls within the session start and end time, mark attendance
+                                        markAttendance(courseId, currentTime.getTime(), sessionStartDateTime, sessionEndDateTime);
+                                    } else {
+                                        // Mark absent if time is > the endTime of the course
+                                        markAbsent(courseId,currentTime.getTime());
+                                    }
+                                    // Add the scanned course to the list of scanned courses for the current day
+                                    scannedCourses[currentDayOfWeek - 1].add(courseId);
                                 } else {
-                                    // Mark absent if time is > the endTime of the course
-                                    markAbsent(courseId,currentTime.getTime());
-                                    // Current time is not within session time
-//                                    Toast.makeText(QRScanner.this, "Not within session time", Toast.LENGTH_SHORT).show();
+                                    // Course is not active on the current day
+                                    Toast.makeText(QRScanner.this, "Course is not active today", Toast.LENGTH_SHORT).show();
                                 }
                             } else {
                                 // Course document does not exist
@@ -132,6 +160,7 @@ public class QRScanner extends AppCompatActivity {
                         });
             }
 
+
             // Helper method to extract hour from time string
             private int getHourOfDay(String time) {
                 String[] parts = time.split(":");
@@ -146,6 +175,7 @@ public class QRScanner extends AppCompatActivity {
             // Method to mark absent
             private void markAbsent(String courseId, Date sessionDateTime){
                 String status = "Absent";
+                Toast.makeText(QRScanner.this, "Status: " + status, Toast.LENGTH_SHORT).show();
                 FirebaseFirestore.getInstance().collection("courses")
                         .document(courseId)
                         .collection("enrolledStudents")
@@ -184,7 +214,7 @@ public class QRScanner extends AppCompatActivity {
             private void markAttendance(String courseId, Date sessionDateTime, Calendar startTime, Calendar endTime) {
                 Calendar currentTime = Calendar.getInstance();
                 String status = currentTime.after(startTime) && currentTime.before(endTime) ? "present" : "absent";
-                Toast.makeText(QRScanner.this, "status: " + status, Toast.LENGTH_SHORT).show();
+                Toast.makeText(QRScanner.this, "Status: " + status, Toast.LENGTH_SHORT).show();
                 // Query Firestore to get enrolled students for the course
                 FirebaseFirestore.getInstance().collection("courses")
                         .document(courseId)
@@ -252,3 +282,5 @@ public class QRScanner extends AppCompatActivity {
         barcodeView.pause();
     }
 }
+
+
