@@ -34,6 +34,7 @@ public class QRScanner extends AppCompatActivity {
     // List to track scanned courses for each day of the week
     private List<String>[] scannedCourses;
     String currentUserID;
+    String courseName;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,7 +83,7 @@ public class QRScanner extends AppCompatActivity {
                             .addOnSuccessListener(queryDocumentSnapshots -> {
                                 for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                                     String courseId = document.getId();
-                                    String courseName = document.getString("name");
+                                    courseName = document.getString("name");
                                     checkCourseSchedule(courseId, courseName, () -> {
                                         // This callback will be executed once the course schedule has been checked
                                         // You can perform any further actions here
@@ -212,7 +213,7 @@ public class QRScanner extends AppCompatActivity {
                             // Handle failure
                             Toast.makeText(QRScanner.this, "Failed to retrieve enrolled students", Toast.LENGTH_SHORT).show();
                         });
-                addAttendanceToUserHistory(currentUserID,currentTime.getTime(),courseId,status);
+                addAttendanceToUserHistory(currentUserID,currentTime.getTime(),courseId,courseName,status);
 
             }
 
@@ -254,12 +255,12 @@ public class QRScanner extends AppCompatActivity {
                             // Handle failure
                             Toast.makeText(QRScanner.this, "Failed to retrieve enrolled students", Toast.LENGTH_SHORT).show();
                         });
-                addAttendanceToUserHistory(currentUserID,currentTime.getTime(),courseId,status);
+                addAttendanceToUserHistory(currentUserID,currentTime.getTime(),courseId,courseName,status);
             }
             // Inside your QRScanner class
 
             // Method to add attendance history to the user's document in Firestore
-            private void addAttendanceToUserHistory(String studentId, Date sessionDateTime, String courseId, String status) {
+            private void addAttendanceToUserHistory(String studentId, Date sessionDateTime, String courseId, String courseName, String status) {
                 // Get Firestore instance
                 FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -275,7 +276,7 @@ public class QRScanner extends AppCompatActivity {
                                 // and set a new document with the session date/time as the document ID
                                 db.collection("users").document(userDocumentId)
                                         .collection("attendance_history").document(sessionDateTime.toString())
-                                        .set(new AttendanceHistory(courseId, sessionDateTime, status))
+                                        .set(new AttendanceHistory(courseId,courseName, sessionDateTime, status))
                                         .addOnSuccessListener(aVoid -> {
                                             // Handle success
                                             Log.d("QRScanner", "Attendance history added to user: " + studentId);

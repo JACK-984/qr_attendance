@@ -10,7 +10,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Course ID:" />
-
+    <TextView
+        android:id="@+id/text_course_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Course name:" />
     <TextView
         android:id="@+id/text_session_datetime"
         android:layout_width="wrap_content"

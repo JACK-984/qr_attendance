@@ -35,6 +35,7 @@ public class AttendanceHistoryAdapter extends RecyclerView.Adapter<AttendanceHis
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         AttendanceHistory item = attendanceList.get(position);
         holder.textCourseId.setText("Course ID: " + item.getCourseId());
+        holder.textCourseName.setText("Course name: " + item.getCourseName());
         holder.textSessionDateTime.setText("Session Date & Time: " + formatDate(item.getSessionDateTime()));
         holder.textStatus.setText("Status: " + item.getStatus());
     }
@@ -45,13 +46,13 @@ public class AttendanceHistoryAdapter extends RecyclerView.Adapter<AttendanceHis
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        TextView textCourseId;
+        TextView textCourseId, textCourseName;
         TextView textSessionDateTime;
         TextView textStatus;
-
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             textCourseId = itemView.findViewById(R.id.text_course_id);
+            textCourseName = itemView.findViewById(R.id.text_course_name);
             textSessionDateTime = itemView.findViewById(R.id.text_session_datetime);
             textStatus = itemView.findViewById(R.id.text_status);
         }

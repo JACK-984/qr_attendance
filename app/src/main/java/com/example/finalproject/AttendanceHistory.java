@@ -7,15 +7,20 @@ public class AttendanceHistory {
     private String courseId;
     private Date sessionDateTime;
     private String status;
-
+    String courseName;
     public AttendanceHistory(){};
     // Constructor
-    public AttendanceHistory(String courseId, Date sessionDateTime, String status) {
+
+
+    public AttendanceHistory(String courseId, String courseName, Date sessionDateTime, String status) {
         this.courseId = courseId;
+        this.courseName = courseName;
         this.sessionDateTime = sessionDateTime;
         this.status = status;
     }
-
+    public String getCourseName(){
+        return courseName;
+    }
     // Getters and setters
     public String getCourseId() {
         return courseId;
