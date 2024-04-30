@@ -28,7 +28,7 @@ public class StudentActivity extends AppCompatActivity {
         setContentView(R.layout.activity_student);
 
         ui_list = findViewById(R.id.student_ui_list);
-        String[] items = {"Scan QR CODE","View course","Sign out"};
+        String[] items = {"Scan QR CODE","View courses","Sign out"};
         ui_list.setLayoutManager(new LinearLayoutManager(this));
         adapter = new studentUIAdapter(this,items);
         ui_list.setAdapter(adapter);

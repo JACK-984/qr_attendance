@@ -11,6 +11,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.zxing.Result;
@@ -31,7 +33,7 @@ public class QRScanner extends AppCompatActivity {
     private boolean scanningInProgress = false;
     // List to track scanned courses for each day of the week
     private List<String>[] scannedCourses;
-
+    String currentUserID;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,7 +41,8 @@ public class QRScanner extends AppCompatActivity {
 
         // Initialize the barcode scanner view
         barcodeView = findViewById(R.id.barcode_scanner);
-
+        // current userID
+        currentUserID = FirebaseAuth.getInstance().getUid();
         // Initialize the list to track scanned courses for each day of the week
         scannedCourses = new List[7];
         for (int i = 0; i < 7; i++) {
@@ -175,6 +178,7 @@ public class QRScanner extends AppCompatActivity {
             // Method to mark absent
             private void markAbsent(String courseId, Date sessionDateTime){
                 String status = "Absent";
+                Calendar currentTime = Calendar.getInstance();
                 Toast.makeText(QRScanner.this, "Status: " + status, Toast.LENGTH_SHORT).show();
                 FirebaseFirestore.getInstance().collection("courses")
                         .document(courseId)
@@ -208,6 +212,8 @@ public class QRScanner extends AppCompatActivity {
                             // Handle failure
                             Toast.makeText(QRScanner.this, "Failed to retrieve enrolled students", Toast.LENGTH_SHORT).show();
                         });
+                addAttendanceToUserHistory(currentUserID,currentTime.getTime(),courseId,status);
+
             }
 
             // Method to mark attendance for enrolled students
@@ -248,8 +254,50 @@ public class QRScanner extends AppCompatActivity {
                             // Handle failure
                             Toast.makeText(QRScanner.this, "Failed to retrieve enrolled students", Toast.LENGTH_SHORT).show();
                         });
+                addAttendanceToUserHistory(currentUserID,currentTime.getTime(),courseId,status);
             }
+            // Inside your QRScanner class
+
+            // Method to add attendance history to the user's document in Firestore
+            private void addAttendanceToUserHistory(String studentId, Date sessionDateTime, String courseId, String status) {
+                // Get Firestore instance
+                FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+                // Query Firestore to find the user document with the matching userID
+                db.collection("users").whereEqualTo("userID", studentId).get()
+                        .addOnSuccessListener(queryDocumentSnapshots -> {
+                            // Check if any documents were found
+                            if (!queryDocumentSnapshots.isEmpty()) {
+                                // Assuming there is only one document for each user, but you might need additional logic
+                                String userDocumentId = queryDocumentSnapshots.getDocuments().get(0).getId();
+
+                                // Create a reference to the attendance history subcollection for the user
+                                // and set a new document with the session date/time as the document ID
+                                db.collection("users").document(userDocumentId)
+                                        .collection("attendance_history").document(sessionDateTime.toString())
+                                        .set(new AttendanceHistory(courseId, sessionDateTime, status))
+                                        .addOnSuccessListener(aVoid -> {
+                                            // Handle success
+                                            Log.d("QRScanner", "Attendance history added to user: " + studentId);
+                                        })
+                                        .addOnFailureListener(e -> {
+                                            // Handle failure
+                                            Log.e("QRScanner", "Failed to add attendance history to user: " + studentId, e);
+                                        });
+                            } else {
+                                // No user document found with the given userID
+                                Log.e("QRScanner", "No user document found with userID: " + studentId);
+                            }
+                        })
+                        .addOnFailureListener(e -> {
+                            // Handle failure
+                            Log.e("QRScanner", "Failed to query users collection", e);
+                        });
+            }
+
+
         });
+
     }
 
     // Handle permission request result

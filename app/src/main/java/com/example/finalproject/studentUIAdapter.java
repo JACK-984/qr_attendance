@@ -58,7 +58,7 @@ public class studentUIAdapter extends RecyclerView.Adapter<studentUIAdapter.View
                     mContext.startActivity(new Intent(mContext, QRScanner.class));
                     break;
                 case 1:
-//                    mContext.startActivity(new Intent(mContext, ViewCourse.class));
+                    mContext.startActivity(new Intent(mContext, StudentViewCourses.class));
                     break;
                 case 2:
                     FirebaseAuth.getInstance().signOut();
