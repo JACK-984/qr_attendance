@@ -2,6 +2,7 @@ package com.example.finalproject;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -28,15 +29,13 @@ public class StudentActivity extends AppCompatActivity {
         setContentView(R.layout.activity_student);
 
         ui_list = findViewById(R.id.student_ui_list);
-        String[] items = {"Scan QR CODE","View courses","Sign out"};
-        ui_list.setLayoutManager(new LinearLayoutManager(this));
+        String[] items = {"Scan QR CODE","Attendance history","Sign out"};
+        ui_list.setLayoutManager(new GridLayoutManager(this,2));
         adapter = new studentUIAdapter(this,items);
         ui_list.setAdapter(adapter);
-
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
         userID = mAuth.getUid();
         db = FirebaseFirestore.getInstance();
-
     }
 }

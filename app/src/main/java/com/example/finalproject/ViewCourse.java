@@ -1,6 +1,7 @@
 package com.example.finalproject;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
@@ -12,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -23,8 +25,9 @@ import java.util.List;
 public class ViewCourse extends AppCompatActivity implements CourseAdapter.OnCourseClickListener{
     RecyclerView courseList;
     CourseAdapter adapter;
-    List<String> courses;
+    List<Course> courses;
     String courseID;
+    Button back;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,7 +36,13 @@ public class ViewCourse extends AppCompatActivity implements CourseAdapter.OnCou
         // Initialize Firestore
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         courses = new ArrayList<>();
-
+        back = findViewById(R.id.backBtn);
+        back.setOnClickListener(v ->
+                {
+                    startActivity(new Intent(this, FacultyActivity.class));
+                    finish();
+                }
+        );
         // Reference to the "courses" collection in Firestore
         db.collection("courses")
                 .get()
@@ -43,13 +52,14 @@ public class ViewCourse extends AppCompatActivity implements CourseAdapter.OnCou
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             // Get the course name from each document
                             String courseName = document.getString("name");
+                            String qrCodeUrl = document.getString("qrCodeURL");
                             courseID = document.getId(); // Get the course ID
-                            courses.add(courseName);
+                            courses.add(new Course(courseName, qrCodeUrl));
                         }
                         // Initialize RecyclerView and set the adapter with the list of courses
                         courseList = findViewById(R.id.courseList);
                         adapter = new CourseAdapter(courses, this); // Pass courses list without courseID
-                        courseList.setLayoutManager(new LinearLayoutManager(this));
+                        courseList.setLayoutManager(new GridLayoutManager(this,2));
                         courseList.setAdapter(adapter);
                     } else {
                         // Handle error

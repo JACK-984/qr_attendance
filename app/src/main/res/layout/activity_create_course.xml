@@ -4,12 +4,23 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:context=".CreateCourse">
+    tools:context=".CreateCourse"
+    android:background="@color/black">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
+        <Button
+            android:textColor="@color/black"
+            android:id="@+id/backBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Back"
+            android:backgroundTint="@color/white"
+            android:layout_margin="16dp"
+            />
     <TextView
+        android:textColor="@color/white"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Create Course"
@@ -17,6 +28,9 @@
         android:layout_margin="16dp"/>
 
     <EditText
+        android:backgroundTint="@color/white"
+        android:textColor="@color/white"
+        android:textColorHint="@color/white"
         android:id="@+id/courseName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -25,6 +39,9 @@
         android:layout_margin="16dp"/>
 
     <EditText
+        android:backgroundTint="@color/white"
+        android:textColor="@color/white"
+        android:textColorHint="@color/white"
         android:id="@+id/courseCode"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -34,6 +51,7 @@
         android:layout_margin="16dp"/>
 
     <TextView
+        android:textColor="@color/white"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Schedule"
@@ -41,6 +59,9 @@
         android:layout_margin="16dp"/>
 
     <EditText
+        android:backgroundTint="@color/white"
+        android:textColor="@color/white"
+        android:textColorHint="@color/white"
         android:id="@+id/start_time"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -50,6 +71,9 @@
         android:layout_margin="16dp"/>
 
     <EditText
+        android:backgroundTint="@color/white"
+        android:textColor="@color/white"
+        android:textColorHint="@color/white"
         android:id="@+id/end_time"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -59,6 +83,8 @@
         android:layout_margin="16dp"/>
 
     <CheckBox
+        android:buttonTint="@color/white"
+        android:textColor="@color/white"
         android:id="@+id/checkBox_monday"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -66,6 +92,8 @@
         android:layout_margin="16dp"/>
 
     <CheckBox
+        android:buttonTint="@color/white"
+        android:textColor="@color/white"
         android:id="@+id/checkBox_tuesday"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -73,6 +101,8 @@
         android:layout_margin="16dp"/>
 
     <CheckBox
+        android:buttonTint="@color/white"
+        android:textColor="@color/white"
         android:id="@+id/checkBox_wednesday"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -80,6 +110,8 @@
         android:layout_margin="16dp"/>
 
     <CheckBox
+        android:buttonTint="@color/white"
+        android:textColor="@color/white"
         android:id="@+id/checkBox_thursday"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -87,18 +119,24 @@
         android:layout_margin="16dp"/>
 
     <CheckBox
+        android:buttonTint="@color/white"
+        android:textColor="@color/white"
         android:id="@+id/checkBox_friday"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Friday"
         android:layout_margin="16dp"/>
     <CheckBox
+        android:buttonTint="@color/white"
+        android:textColor="@color/white"
         android:id="@+id/checkBox_saturday"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Saturday"
         android:layout_margin="16dp"/>
         <CheckBox
+            android:buttonTint="@color/white"
+            android:textColor="@color/white"
             android:id="@+id/checkBox_sunday"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -106,11 +144,13 @@
             android:layout_margin="16dp"/>
 
         <Button
+            android:backgroundTint="@color/white"
         android:id="@+id/button_create_course"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Create Course"
         android:layout_gravity="center"
-        android:layout_marginTop="32dp"/>
+        android:layout_marginTop="32dp"
+            android:textColor="@color/black"/>
     </LinearLayout>
 </ScrollView>

@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,19 +27,24 @@ public class EnrollStudent extends AppCompatActivity {
     private RecyclerView recyclerViewUnenrolledStudents;
     private StudentAdapter adapter;
     private List<String> unenrolledStudents;
-    Button updateBtn;
     private List<String> enrolledStudents; // Add a list to store enrolled students
 
     // Map to store the checked state of each student
     String courseID;
+    Button back;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_enroll_student);
-
+        back = findViewById(R.id.backBtn);
+        back.setOnClickListener(v ->
+                {
+                    startActivity(new Intent(this, ViewCourse.class));
+                    finish();
+                }
+        );
         enrolledStudents = new ArrayList<>(); // Initialize the list of enrolled students
 
-        updateBtn = findViewById(R.id.updateBtn);
         unenrolledStudents = new ArrayList<>(); // Initialize the list of unenrolled students
         // Initialize Firestore
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -74,25 +80,6 @@ public class EnrollStudent extends AppCompatActivity {
                         Toast.makeText(EnrollStudent.this, "Failed to load students", Toast.LENGTH_SHORT).show();
                     }
                 });
-
-        // Set click listener for the updateBtn button
-        updateBtn.setOnClickListener(v -> {
-            // Check if the list of unenrolled students is empty
-            if (unenrolledStudents.isEmpty()) {
-                // Show a message indicating that there are no students to enroll
-                Toast.makeText(EnrollStudent.this, "No students to enroll", Toast.LENGTH_SHORT).show();
-                return; // Exit the method early
-            }
-
-            // Iterate over the unenrolled students list
-            for (String studentName : unenrolledStudents) {
-                // Check if the checkbox for the current student is checked
-                if (adapter.isChecked(studentName)) {
-                    // Enroll the student
-                    adapter.enrollStudent(studentName);
-                }
-            }
-        });
     }
 
     private class StudentAdapter extends RecyclerView.Adapter<StudentAdapter.StudentViewHolder> {

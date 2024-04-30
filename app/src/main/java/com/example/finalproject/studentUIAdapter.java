@@ -1,5 +1,6 @@
 package com.example.finalproject;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -63,6 +64,7 @@ public class studentUIAdapter extends RecyclerView.Adapter<studentUIAdapter.View
                 case 2:
                     FirebaseAuth.getInstance().signOut();
                     mContext.startActivity(new Intent(mContext, LoginActivity.class));
+                    ((Activity) mContext).finish();
                     break;
                 // Add cases for other items here
             }

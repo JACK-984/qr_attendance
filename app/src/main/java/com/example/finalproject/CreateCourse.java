@@ -1,6 +1,8 @@
 package com.example.finalproject;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -31,7 +33,7 @@ public class CreateCourse extends AppCompatActivity {
     private Button buttonCreateCourse;
     private FirebaseFirestore db;
     private FirebaseStorage storage;
-
+    Button back;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,7 +42,7 @@ public class CreateCourse extends AppCompatActivity {
         // Initialize Firestore and Firebase Storage
         db = FirebaseFirestore.getInstance();
         storage = FirebaseStorage.getInstance();
-
+        back = findViewById(R.id.backBtn);
         // Initialize views
         editTextCourseName = findViewById(R.id.courseName);
         editTextCourseCode = findViewById(R.id.courseCode);
@@ -57,6 +59,12 @@ public class CreateCourse extends AppCompatActivity {
 
         // Set click listener for the create course button
         buttonCreateCourse.setOnClickListener(v -> createCourse());
+        back.setOnClickListener(v ->
+        {
+            startActivity(new Intent(this, FacultyActivity.class));
+            finish();
+        }
+        );
     }
 
     private void createCourse() {

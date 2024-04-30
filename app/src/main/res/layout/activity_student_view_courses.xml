@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".StudentViewCourses"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@color/black">
     <TextView
         android:id="@+id/textViewTitle"
         android:layout_width="match_parent"
@@ -14,7 +15,8 @@
         android:textSize="24sp"
         android:textStyle="bold"
         android:gravity="center"
-        android:layout_marginBottom="16dp"/>
+        android:layout_marginBottom="16dp"
+        android:textColor="@color/white"/>
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
